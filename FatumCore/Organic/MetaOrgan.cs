@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Metatron
+namespace FatumCore.Organic
 {
     public class MetaOrgan
     {

@@ -3,17 +3,13 @@
 
 //   Copyright (C) 2003-2019 Eric Knight
 
-using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 using System.Xml;
-using System.Data.SQLite;
 using Newtonsoft.Json;
-using FatumCore;
 using System.Text.RegularExpressions;
 using Fatum.FatumCore;
+using System.Data.SQLite;
 
 namespace FatumCore
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FatumCore;
 
-namespace Metatron
+namespace FatumCore.Organic
 {
     public class MetaThought
     {
