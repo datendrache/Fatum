@@ -4,6 +4,10 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Fatum Metadata Engine</Title>
+    <Description>Low-Level Metadata Processing Tools</Description>
+    <Copyright>Copyright 2003-2023 by Eric Knight</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
