@@ -50,19 +50,12 @@ steps:
 - task: NuGetCommand@2
   displayName: 'NuGet push'
   inputs:
-    command: push
+    command: 'push'
     publishVstsFeed: 'FatumCore/FatumCore'
     allowPackageConflicts: true
-
-- task: NuGetAuthenticate@1
-  inputs:
-    nuGetServiceConnections: <NAME_OF_YOUR_SERVICE_CONNECTION>
-
- - script: |
-      dotnet build <CSPROJ_PATH> --configuration <CONFIGURATION>
-      dotnet pack <CSPROJ_PATH> -p:PackageVersion=<YOUR_PACKAGE_VERSION> --output <OUTPUT_DIRECTORY> --configuration <CONFIGURATION>
-      dotnet nuget push <PACKAGE_PATH> --source https://beehive.archlake.com/FatumCore/_packaging/FatumCore/nuget/v3/index.json --api-key <ANY_STRING>
-    displayName: "Build, pack and push"    
+    nobuild: true
+    nuGetFeedType: 'internal'
+  
 
 
 
