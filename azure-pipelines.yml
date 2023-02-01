@@ -11,6 +11,9 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  Major: '1'
+  Minor: '0'
+  Patch: '0'
 
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
@@ -22,40 +25,10 @@ steps:
     packagesToPack: '**/*.csproj'
     packDestination: '$(Build.ArtifactStagingDirectory)'
 
-variables:
-  Major: '1'
-  Minor: '0'
-  Patch: '0'
-
-steps:
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
   inputs:
     command: pack
     versioningScheme: byPrereleaseNumber
     majorVersion: '$(Major)'
     minorVersion: '$(Minor)'
     patchVersion: '$(Patch)'
-
-task: DotNetCoreCLI@2
-inputs:
-    command: pack
-    versioningScheme: byPrereleaseNumber
-    majorVersion: '$(Major)'
-    minorVersion: '$(Minor)'
-    patchVersion: '$(Patch)'
-
-steps:
-- task: NuGetAuthenticate@0
-  displayName: 'NuGet Authenticate'
-- task: NuGetCommand@2
-  displayName: 'NuGet push'
-  inputs:
-    command: 'push'
-    publishVstsFeed: 'FatumCore/FatumCore'
-    allowPackageConflicts: true
-    nobuild: true
-    nuGetFeedType: 'internal'
-  
-
-
-
