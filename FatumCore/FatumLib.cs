@@ -1,16 +1,27 @@
-﻿//   Jophiel - Computer Forensics Collection, Analysis and Reporting Tool
-//   Copyright (C) 2003-2019 Eric Knight
+﻿//   Fatum -- Metadata Processing Library
+//
+//   Copyright (C) 2003-2023 Eric Knight
+//   This software is distributed under the GNU Public v3 License
+//
+//   This program is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
 
-using System;
-using System.IO;
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 using System.Collections;
 using System.Net;
 using System.Text;
 using System.Security.Cryptography;
-using System.Linq;
-using Fatum.FatumCore;
 
-namespace FatumCore
+namespace Proliferation.Fatum
 {
     public class FatumLib
     {

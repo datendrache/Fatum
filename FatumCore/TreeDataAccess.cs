@@ -1,17 +1,28 @@
-﻿//   Jophiel - Computer Forensics Collection, Analysis and Reporting Tool
-//   Copyright (C) 2006-2014 by Eric Knight
+﻿//   Fatum -- Metadata Processing Library
+//
+//   Copyright (C) 2003-2023 Eric Knight
+//   This software is distributed under the GNU Public v3 License
+//
+//   This program is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
 
-//   Copyright (C) 2003-2019 Eric Knight
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections;
 using System.Text;
 using System.Xml;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
-using Fatum.FatumCore;
-using System.Data.SQLite;
 
-namespace FatumCore
+namespace Proliferation.Fatum
 {
     public class TreeDataAccess
     {  
@@ -101,53 +112,6 @@ namespace FatumCore
                 throw new TreeDataAccessInvalidDataException();
             }
             return (newData);
-        }
-
-        // =======================================================================
-        // Read SQLite Table
-        // =======================================================================
-
-        public static Tree readSQLite(string filename, string Table)
-        {
-            Tree result = new Tree();
-            ArrayList columns = new ArrayList();
-
-            string connString = "Data Source=" + filename;
-            using (SQLiteConnection conn = new SQLiteConnection(connString))
-            {
-                using (SQLiteCommand cmd = new SQLiteCommand("pragma table_info(" + Table + ");", conn))
-                {
-                    conn.Open();
-                    using (SQLiteDataReader dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                             columns.Add(dr.GetString(1));
-                        }
-                    }
-                    conn.Close();
-                }
-
-                using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM " + Table + ";", conn))
-                {
-                    conn.Open();
-                    using (SQLiteDataReader dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            Tree newRow = new Tree();
-                            for (int i = 0; i < dr.FieldCount; i++)
-                            {
-                                string avalue = dr.GetValue(i).ToString();
-                                newRow.addElement((string)columns[i], avalue);
-                            }
-                            result.addNode(newRow, "Row");
-                        }
-                    }
-                    conn.Close();
-                }
-            }
-            return result;
         }
 
         public static int writeXML(string filename, Tree outdata, string recordName)
