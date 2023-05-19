@@ -21,7 +21,7 @@ using System.Collections;
 
 namespace Proliferation.Fatum
 {
-    public class TreeFlatten
+    public sealed class TreeFlatten
     {
         public Tree Flattened = null;
 

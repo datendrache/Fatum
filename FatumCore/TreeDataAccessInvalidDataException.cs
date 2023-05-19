@@ -18,7 +18,7 @@
 
 namespace Proliferation.Fatum
 {
-    public class TreeDataAccessInvalidDataException : System.Exception
+    public sealed class TreeDataAccessInvalidDataException : System.Exception
     {
         public int linenumber = 0;
         public int character = 0;

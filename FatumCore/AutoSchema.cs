@@ -20,7 +20,7 @@ using System.Collections;
 
 namespace Proliferation.Fatum
 {
-    public class AutoSchema
+    public sealed class AutoSchema
     {
         public Tree Schema = null;
 

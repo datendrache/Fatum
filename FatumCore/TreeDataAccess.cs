@@ -24,7 +24,7 @@ using System.Text.RegularExpressions;
 
 namespace Proliferation.Fatum
 {
-    public class TreeDataAccess
+    public sealed class TreeDataAccess
     {  
         // =======================================================================
         // Read CSV File

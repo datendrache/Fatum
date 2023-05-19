@@ -18,7 +18,7 @@
 
 namespace Proliferation.Fatum
 {
-    public class TreeDeallocatedException : System.Exception
+    public sealed class TreeDeallocatedException : System.Exception
     {
     }
 }

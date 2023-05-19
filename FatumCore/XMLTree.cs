@@ -21,7 +21,7 @@ using System.Xml;
 
 namespace Proliferation.Fatum
 {
-    public class XMLTree
+    public sealed class XMLTree
     {
         // =======================================================================
         // XML File Read and Write

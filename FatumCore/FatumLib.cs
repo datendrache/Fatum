@@ -23,7 +23,7 @@ using System.Security.Cryptography;
 
 namespace Proliferation.Fatum
 {
-    public class FatumLib
+    public sealed class FatumLib
     {
         public static string byteToHex(byte value)
         {

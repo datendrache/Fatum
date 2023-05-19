@@ -18,7 +18,7 @@
 
 namespace Proliferation.Fatum
 {
-    public class Tree
+    public sealed class Tree
     {
         public string Value = "";
         public string Name = "";
