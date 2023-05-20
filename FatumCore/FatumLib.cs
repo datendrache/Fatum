@@ -23,9 +23,9 @@ using System.Security.Cryptography;
 
 namespace Proliferation.Fatum
 {
-    public sealed class FatumLib
+    public static class FatumLib
     {
-        public static string byteToHex(byte value)
+        public static string ByteToHex(byte value)
         {
             string tmpstring = "";
 
@@ -73,7 +73,7 @@ namespace Proliferation.Fatum
             return (tmpstring);
         }
 
-        public static byte[] hexToBytes(string hex)
+        public static byte[]? HexToBytes(string hex)
         {
             byte[] buffer = new byte[hex.Length / 2];
             int buffercounter = 0;
@@ -83,7 +83,7 @@ namespace Proliferation.Fatum
             while (i < length)
             {
                 string abyte = hex.Substring(i, 2);
-                buffer[buffercounter] = hexToByte(abyte);
+                buffer[buffercounter] = HexToByte(abyte);
                 buffercounter++;
                 i += 2;
             }
@@ -103,7 +103,7 @@ namespace Proliferation.Fatum
             }
         }
 
-        public static int convertDWORDToInt(byte[] dword)
+        public static int ConvertDWORDToInt(byte[] dword)
         {
             int result = 0;
 
@@ -119,10 +119,10 @@ namespace Proliferation.Fatum
                 }
             }
 
-            return (result);
+            return result;
         }
 
-        public static byte[] convertHexstringToDWORD(string dword)
+        public static byte[] ConvertHexstringToDWORD(string dword)
         {
             byte[] result = new byte[4];
             int byteindex = 0;
@@ -130,14 +130,14 @@ namespace Proliferation.Fatum
             for (int i = 0; i < 8; i += 2)
             {
                 string tmp = dword.Substring(i, i + 2);
-                result[byteindex] = hexToByte(tmp);
+                result[byteindex] = HexToByte(tmp);
                 byteindex++;
             }
 
             return (result);
         }
 
-        public static string convertBytesTostring(byte[] convert)
+        public static string ConvertBytesTostring(byte[] convert)
         {
             string result = "";
 
@@ -145,13 +145,13 @@ namespace Proliferation.Fatum
 
             for (int i = 0; i < length; i++)
             {
-                result += byteToHex(convert[i]);
+                result += ByteToHex(convert[i]);
             }
 
             return (result);
         }
 
-        public static byte convertBinarystringToByte(string dword)
+        public static byte ConvertBinarystringToByte(string dword)
         {
             byte result = 0;
             string convert = dword.Substring(2, dword.Length);
@@ -167,7 +167,7 @@ namespace Proliferation.Fatum
         }
 
 
-        public static string convertBytesToText(byte[] incoming, int offset)
+        public static string ConvertBytesToText(byte[] incoming, int offset)
         {
             string tmpstring = "";
 
@@ -191,7 +191,7 @@ namespace Proliferation.Fatum
             return (tmpstring);
         }
 
-        public static byte[] convertTransferHexToBytes(string[] incoming)
+        public static byte[] ConvertTransferHexToBytes(string[] incoming)
         {
             ArrayList listVector = new ArrayList();
             byte[] unencoded = null;
@@ -210,7 +210,7 @@ namespace Proliferation.Fatum
                 for (int i = 0; i < currentLineLength / 2; i++)
                 {
                     string tmpHex = currentLine.Substring(i * 2, 2);
-                    bytelist[i] = hexToByte(tmpHex);
+                    bytelist[i] = HexToByte(tmpHex);
                 }
                 listVector.Add(bytelist);
                 totalBytes += bytelist.Length;
@@ -232,11 +232,10 @@ namespace Proliferation.Fatum
             }
 
             listVector.Clear();
-            listVector = null;
             return (unencoded);
         }
 
-        public static string[] convertBytesToTransferHex(byte[] incoming)
+        public static string[] ConvertBytesToTransferHex(byte[] incoming)
         {
             ArrayList listVector = new ArrayList();
             string tmp = "";
@@ -246,7 +245,7 @@ namespace Proliferation.Fatum
 
             while (index < incomingLength)
             {
-                tmp += byteToHex(incoming[index]);
+                tmp += ByteToHex(incoming[index]);
                 if (step > 40)
                 {
                     step = 0;
@@ -270,11 +269,10 @@ namespace Proliferation.Fatum
             }
 
             listVector.Clear();
-            listVector = null;
             return (result);
         }
 
-        public static Boolean validateEmail(string test)
+        public static Boolean ValidateEmail(string test)
         {
             Boolean CHECK = false;
 
@@ -320,12 +318,9 @@ namespace Proliferation.Fatum
             for (int i = 0; i < EMAILlength; i++)
             {
                 char ACHAR = EMAIL[i];
-                if (!Char.IsLetterOrDigit(ACHAR))
+                if (!Char.IsLetterOrDigit(ACHAR) && !(ACHAR == '_' | ACHAR == '-' | ACHAR == '.'))
                 {
-                    if (!(ACHAR == '_' | ACHAR == '-' | ACHAR == '.'))
-                    {
-                        return (false);
-                    }
+                    return (false);
                 }
             }
 
@@ -353,7 +348,7 @@ namespace Proliferation.Fatum
             return (CHECK);
         }
 
-        public static string randomPassword(int characters)
+        public static string RandomPassword(int characters)
         {
             Random randomizer = new Random();
             string Password = "";
@@ -432,7 +427,7 @@ namespace Proliferation.Fatum
         return (Password);
         }
 
-        public static string simplifiedDataSize(long datalength)
+        public static string SimplifiedDataSize(long datalength)
         {
             string result;
 
@@ -444,27 +439,27 @@ namespace Proliferation.Fatum
             {
                 if (datalength < 1000000)  // Kilobytes
                 {
-                    float temp = datalength / 1000;
+                    float temp = (float) datalength / 1000;
                     result = temp.ToString() + " Kilobytes";
                 }
                 else
                 {
                     if (datalength < 10000000000)  // Megabytes
                     {
-                        float temp = datalength / 1000000;
+                        float temp = (float)datalength / 1000000;
                         result = temp.ToString() + " Megabytes";
                     }
                     else
                     {
                         if (datalength < 100000000000000)  // Gigabytes
                         {
-                            float temp = datalength / 1000000000;
+                            float temp = (float)datalength / 1000000000;
                             result = temp.ToString() + " Gigabytes";
                         }
                         else
                         {
                             // Terabytes
-                            float temp = datalength / 1000000000000;
+                            float temp = (float) datalength / 1000000000000;
                             result = temp.ToString() + " Terabytes";
                         }
                     }
@@ -474,7 +469,7 @@ namespace Proliferation.Fatum
             return result;
         }
 
-        public static string toSafeString(string incoming)
+        public static string ToSafeString(string incoming)
         {
             string result = "";
             int incominglength = incoming.Length;
@@ -524,7 +519,7 @@ namespace Proliferation.Fatum
             return (result);
         }
 
-        public static byte hexToByte(string hex)
+        public static byte HexToByte(string hex)
         {
             int result = 0;
 
@@ -572,7 +567,7 @@ namespace Proliferation.Fatum
             return ((byte)(result));
         }
 
-        public static string fromSafeString(string incoming)
+        public static string FromSafeString(string incoming)
         {
             string result = "";
             int incominglength = incoming.Length;
@@ -595,7 +590,7 @@ namespace Proliferation.Fatum
                         }
                     }
 
-                    byte tmpvalue = hexToByte(value);
+                    byte tmpvalue = HexToByte(value);
                     int asciivalue = (byte)tmpvalue;
                     char newCharacter = (char)asciivalue;
                     result += newCharacter;
@@ -618,67 +613,9 @@ namespace Proliferation.Fatum
             return (result.Replace("&lt;", "<").Replace("&gt;", ">").Replace("&amp;", "&").Replace("&quot;", "\"").Replace("&apos;", "'").Replace("\0", string.Empty));
         }
 
-        //public static string fromSafeString(string incoming)
-        //{
-        //    string result = "";
-        //    int incominglength = incoming.Length;
-
-        //    for (int i = 0; i < incominglength; i++)
-        //    {
-        //        Boolean found = false;
-
-        //        if (incoming[i] == '%')
-        //        {
-        //            Boolean NoError = true;
-        //            string value = "";
-        //            i += 1;
-        //            if (i < incominglength)
-        //            {
-        //                value += incoming[i];
-        //                i++;
-        //                if (i < incominglength)
-        //                {
-        //                    value += incoming[i];
-        //                }
-        //                else
-        //                {
-        //                    NoError = false;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                NoError = false;
-        //            }
-
-        //            if (NoError)
-        //            {
-        //                byte tmpvalue = hexToByte(value);
-        //                int asciivalue = (byte)tmpvalue;
-        //                char newCharacter = (char)asciivalue;
-        //                result += newCharacter;
-        //            }
-        //            found = true;
-        //        }
-
-        //        if (!found)
-        //        {
-        //            if (incoming[i] == '+')
-        //            {
-        //                result += ' ';
-        //            }
-        //            else
-        //            {
-        //                result += incoming[i];
-        //            }
-        //        }
-        //    }
-
-        //    return (result.Replace("&lt;", "<").Replace("&gt;", ">").Replace("&amp;", "&").Replace("&quot;", "\"").Replace("&apos;", "'").Replace("\0", string.Empty));
-        //}
-
-        public static Tree URIXMLtoTree(string URI, string PostData)
+        public static Tree? UriXmlToTree(string URI, string PostData)
         {
-            Tree result = null;
+            Tree? result = null;
 
             try
             {
@@ -690,7 +627,7 @@ namespace Proliferation.Fatum
                     string s = client.UploadString(URI, PostData);
                     
                     //string s = client.DownloadString(URI);
-                    result = XMLTree.readXMLFromString(s);
+                    result = XMLTree.ReadXmlFromString(s);
                 }
             }
             catch (Exception xyz)
@@ -700,7 +637,7 @@ namespace Proliferation.Fatum
             return result;
         }
 
-        public static Boolean validateNoSymbols(string validate)
+        public static Boolean ValidateNoSymbols(string validate)
         {
             Boolean result = true;
 
@@ -719,10 +656,9 @@ namespace Proliferation.Fatum
         {
             string result;
 
-            //string order = unscrambled;
             int unscrambledLength = unscrambled.Length;
 
-            byte[] unscram; // = new byte[unscrambled.Length];
+            byte[] unscram;
             unscram = Encoding.ASCII.GetBytes(unscrambled);
 
             for (int i = 0; i < unscrambledLength; i++)
@@ -730,26 +666,24 @@ namespace Proliferation.Fatum
                 unscram[i] = (byte)(unscram[i] + (byte) (((13+i) * i+3) % 256));
             }
 
-            result = convertBytesTostring(unscram);
+            result = ConvertBytesTostring(unscram);
             result = Encrypt(result, key);
             return result;
         }
 
-        public static string Unscramble(string scrambled, string key)
+        public static string? Unscramble(string scrambled, string key)
         {
-            string result;
+            byte[]? scram = HexToBytes(Decrypt(scrambled, key));
 
-            result = Decrypt(scrambled, key);
-            byte[] scram = hexToBytes(result);
-            int scrambledLength = scram.Length;
-
-            for (int i = 0; i < scrambledLength; i++)
+            if (scram != null && scram.Length > 0)
             {
-                scram[i] = (byte) (scram[i] - (byte) (((13+i) * i+3) % 256));
+                for (int i = 0; i < scram.Length; i++)
+                {
+                    scram[i] = (byte)(scram[i] - (byte)(((13 + i) * i + 3) % 256));
+                }
+                return Encoding.ASCII.GetString(scram);
             }
-
-            result = Encoding.ASCII.GetString(scram);
-            return result;
+             return null;
         }
 
         public static string GenerateRandomPassword(int length)

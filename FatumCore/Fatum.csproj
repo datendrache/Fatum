@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
 	<PackageId>Proliferation.Fatum</PackageId>
-	<Version>1.0.1</Version>
+	<Version>1.0.2</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -11,10 +11,25 @@
     <Description>Low-Level Metadata Processing Tools</Description>
 	<Authors>Datendrache</Authors>
     <Copyright>Copyright 2003-2023 by Eric Knight</Copyright>
+    <RepositoryUrl>https://github.com/datendrache/Fatum</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>proliferation; fatum; metadata; tree; tools</PackageTags>
+    <PackageProjectUrl>https://github.com/datendrache/Fatum</PackageProjectUrl>
+    <PackageReleaseNotes>Massive cleanups</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="LICENSE.txt">
+      <Pack>true</Pack>
+	  <PackagePath>\</PackagePath>
+    </Content>
+    <Content Include="README.md">
+      <Pack>true</Pack>
+	  <PackagePath>\</PackagePath>
+    </Content>
+  </ItemGroup>
 </Project>

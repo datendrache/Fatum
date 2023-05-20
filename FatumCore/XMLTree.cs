@@ -27,14 +27,14 @@ namespace Proliferation.Fatum
         // XML File Read and Write
         // =======================================================================
 
-        public static Tree readXML(string filename)
+        public static Tree ReadXML(string filename)
         {
             StreamReader infile = new StreamReader(File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-            XmlTextReader newReader = new XmlTextReader(infile);
-            Tree newRoot = new Tree();
-            List<string> LabelStack = new List<string>();
+            XmlTextReader newReader = new(infile);
+            Tree newRoot = new();
+            List<string> LabelStack = new();
 
-            recurseXML(newReader, LabelStack, newRoot, true, false, 0, filename);
+            RecurseXML(newReader, LabelStack, newRoot, true, false, 0, filename);
 
             if (LabelStack.Count > 0)
             {
@@ -46,7 +46,7 @@ namespace Proliferation.Fatum
             return newRoot;
         }
 
-        public static Tree readXML(Stream instream, string filename)
+        public static Tree ReadXML(Stream instream, string filename)
         {
             StreamReader infile = new StreamReader(instream);
 
@@ -54,13 +54,13 @@ namespace Proliferation.Fatum
             Tree newRoot = new Tree();
             List<string> LabelStack = new List<string>();
 
-            recurseXML(newReader, LabelStack, newRoot, true, false, 0, filename);
+            RecurseXML(newReader, LabelStack, newRoot, true, false, 0, filename);
 
             infile.Close();
             return newRoot;
         }
 
-        public static Tree readXMLFromString(string indata)
+        public static Tree ReadXmlFromString(string indata)
         {
             StringReader newStringReader = new StringReader(indata);
             XmlReaderSettings settings = new XmlReaderSettings();
@@ -76,13 +76,13 @@ namespace Proliferation.Fatum
                 if (newReader.MoveToFirstAttribute())
                     do
                     {
-                        newRoot.addAttribute(newReader.Name, newReader.Value);
+                        newRoot.AddAttribute(newReader.Name, newReader.Value);
                     } while (newReader.MoveToNextAttribute());
             }
 
             try
             {
-                recurseXML(newReader, LabelStack, newRoot, true, false, 0, "(string)");
+                RecurseXML(newReader, LabelStack, newRoot, true, false, 0, "(string)");
             }
             catch (XmlException)
             {
@@ -93,7 +93,7 @@ namespace Proliferation.Fatum
             return newRoot;
         }
 
-        public static Boolean mustConvertValue(string instring)
+        public static Boolean MustConvertValue(string instring)
         {
             Boolean result = false;
 
@@ -131,15 +131,15 @@ namespace Proliferation.Fatum
             return result;
         }
 
-        public static string stringToHex(string instring)
+        public static string StringToHex(string instring)
         {
             string outstring;
             ASCIIEncoding encoding = new ASCIIEncoding();
-            outstring = FatumLib.convertBytesTostring(encoding.GetBytes(instring));
+            outstring = FatumLib.ConvertBytesTostring(encoding.GetBytes(instring));
             return outstring;
         }
 
-        public static void recurseXML(XmlReader newReader, List<string> LabelStack, Tree currentNode, Boolean root, Boolean BinHex, int level, string filename)
+        public static void RecurseXML(XmlReader newReader, List<string> LabelStack, Tree currentNode, Boolean root, Boolean BinHex, int level, string filename)
         {
             if (level >= 200)  // This is to prevent Stack Overflows because, for whatever reason, C# doesn't know how to handle their own.
             {
@@ -163,7 +163,7 @@ namespace Proliferation.Fatum
                             if (newReader.IsEmptyElement)
                             {
                                 Tree newNode = new Tree();
-                                currentNode.addNode(newNode, newReader.Name);
+                                currentNode.AddNode(newNode, newReader.Name);
                             }
                             else
                             {
@@ -173,18 +173,18 @@ namespace Proliferation.Fatum
                                     Tree newElement = new Tree();
                                     Boolean isBinHex = false;
 
-                                    currentNode.addNode(newElement, newReader.Name);
-                                    isBinHex = checkAttributes(newReader, newElement);
+                                    currentNode.AddNode(newElement, newReader.Name);
+                                    isBinHex = CheckAttributes(newReader, newElement);
                                     newReader.Read();
-                                    recurseXML(newReader, LabelStack, newElement, false, isBinHex, level + 1, filename);
+                                    RecurseXML(newReader, LabelStack, newElement, false, isBinHex, level + 1, filename);
                                 }
                                 else
                                 {
                                     Boolean isBinHex = false;
                                     currentNode.Value = newReader.Name;
-                                    isBinHex = checkAttributes(newReader, currentNode);
+                                    isBinHex = CheckAttributes(newReader, currentNode);
                                     newReader.Read();
-                                    recurseXML(newReader, LabelStack, currentNode, false, isBinHex, level + 1, filename);
+                                    RecurseXML(newReader, LabelStack, currentNode, false, isBinHex, level + 1, filename);
                                 }
                             }
                         }
@@ -195,13 +195,13 @@ namespace Proliferation.Fatum
                                 if (BinHex)
                                 {
                                     ASCIIEncoding enc = new ASCIIEncoding();
-                                    byte[] currentConverted = FatumLib.hexToBytes(newReader.Value);
+                                    byte[] currentConverted = FatumLib.HexToBytes(newReader.Value);
 
-                                    currentNode.setElement(enc.GetString(currentConverted));
+                                    currentNode.SetElement(enc.GetString(currentConverted));
                                 }
                                 else
                                 {
-                                    currentNode.setElement(newReader.Value);
+                                    currentNode.SetElement(newReader.Value);
                                 }
                             }
                             else
@@ -220,7 +220,7 @@ namespace Proliferation.Fatum
                                 {
                                     if (newReader.NodeType == XmlNodeType.CDATA)
                                     {
-                                        currentNode.setElement("CDATA", newReader.Value);
+                                        currentNode.SetElement("CDATA", newReader.Value);
                                     }
                                 }
                             }
@@ -245,7 +245,7 @@ namespace Proliferation.Fatum
             }
         }
 
-        private static Boolean checkAttributes(XmlReader newReader, Tree newElement)
+        private static Boolean CheckAttributes(XmlReader newReader, Tree newElement)
         {
             Boolean isBinHex = false;
 
@@ -261,7 +261,7 @@ namespace Proliferation.Fatum
                     }
                     else
                     {
-                        newElement.addAttribute(newReader.Name, newReader.Value);
+                        newElement.AddAttribute(newReader.Name, newReader.Value);
                     }
                 }
             }

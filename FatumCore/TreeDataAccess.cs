@@ -16,7 +16,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections;
 using System.Text;
 using System.Xml;
 using Newtonsoft.Json;
@@ -30,12 +29,12 @@ namespace Proliferation.Fatum
         // Read CSV File
         // =======================================================================
 
-        public static Tree readCSV(string infile)
+        public static Tree ReadCsv(string infile)
         {
             TextReader tr = new StreamReader(infile);
-            string indata;
-            Tree newData = new Tree(infile);
-            string[] headerRow = null;
+            string? indata;
+            Tree newData = new(infile);
+            string[]? headerRow = null;
 
             try
             {
@@ -44,20 +43,29 @@ namespace Proliferation.Fatum
                 do
                 {
                     indata = tr.ReadLine();
-                    string[] parsedData = indata.Split(',');
+                    if (indata != null)
+                    {
+                        string[] parsedData = indata.Split(',');
 
-                    if (i != 0)
-                    {
-                        Tree newRow = new Tree(i.ToString());
-                        for (int x = 0; x < parsedData.Length; x++)
+                        if (i != 0)
                         {
-                            newRow.setElement(headerRow[x], parsedData[x]);
+                            Tree newRow = new(i.ToString());
+                            if (parsedData != null)
+                            {
+                                for (int x = 0; x < parsedData.Length; x++)
+                                {
+                                    if (headerRow != null && parsedData[x] != null)
+                                    {
+                                        newRow.SetElement(headerRow[x], parsedData[x]);
+                                    }
+                                }
+                                newData.AddNode(newRow, "row");
+                            }
                         }
-                        newData.addNode(newRow,"row");
-                    }
-                    else
-                    {
-                        headerRow = parsedData;
+                        else
+                        {
+                            headerRow = parsedData;
+                        }
                     }
                     i++;
                 }
@@ -65,8 +73,11 @@ namespace Proliferation.Fatum
             }
             catch (Exception)
             {
+                tr.Close();
                 throw new TreeDataAccessInvalidDataException();
             }
+            
+            tr.Close();
             return (newData);
         }
 
@@ -74,12 +85,12 @@ namespace Proliferation.Fatum
         // Read tab delimited text file
         // =======================================================================
 
-        public static Tree readTextTab(string infile)
+        public static Tree ReadTextTab(string infile)
         {
             TextReader tr = new StreamReader(infile);
-            string indata = "";
-            Tree newData = new Tree(infile);
-            string[] headerRow = null;
+            string? indata;
+            Tree newData = new(infile);
+            string[]? headerRow = null;
 
             try
             {
@@ -88,42 +99,50 @@ namespace Proliferation.Fatum
                 do
                 {
                     indata = tr.ReadLine();
-                    string[] parsedData = indata.Split('\t');
+                    if (indata != null)
+                    {
+                        string[] parsedData = indata.Split('\t');
 
-                    if (i != 0)
-                    {
-                        Tree newRow = new Tree(i.ToString());
-                        for (int x = 0; x < parsedData.Length; x++)
+                        if (i != 0)
                         {
-                            newRow.setElement(headerRow[x], parsedData[x]);
+                            Tree newRow = new(i.ToString());
+                            for (int x = 0; x < parsedData.Length; x++)
+                            {
+                                if (headerRow!=null && parsedData[x] != null)
+                                {
+                                    newRow.SetElement(headerRow[x], parsedData[x]);
+                                }
+                            }
+                            newData.AddNode(newRow, "row");
                         }
-                        newData.addNode(newRow, "row");
+                        else
+                        {
+                            headerRow = parsedData;
+                        }
+                        i++;
                     }
-                    else
-                    {
-                        headerRow = parsedData;
-                    }
-                    i++;
                 }
                 while (indata != null);
             }
             catch (Exception)
             {
+                tr.Close();
                 throw new TreeDataAccessInvalidDataException();
             }
+            tr.Close();
             return (newData);
         }
 
-        public static int writeXML(string filename, Tree outdata, string recordName)
+        public static int WriteXml(string filename, Tree outdata, string recordName)
         {
             int result = 1;
 
-            XmlTextWriter newWriter = new XmlTextWriter(filename,Encoding.Unicode);
+            XmlTextWriter newWriter = new(filename,Encoding.Unicode);
 
             newWriter.WriteStartDocument();
             newWriter.WriteWhitespace("\r\n");
             newWriter.WriteStartElement(recordName);
-            recurseWriteXML(outdata, newWriter,1);
+            RecurseWriteXML(outdata, newWriter,1);
             newWriter.WriteEndElement();
             newWriter.WriteWhitespace("\r\n");
             newWriter.WriteEndDocument();
@@ -133,15 +152,15 @@ namespace Proliferation.Fatum
             return result;
         }
 
-        public static string writeTreeToXMLString(Tree outdata, string recordName)
+        public static string WriteTreeToXmlString(Tree outdata, string recordName)
         {
-            StringWriter stringoutput = new StringWriter(new StringBuilder(63334));
-            XmlTextWriter newWriter = new XmlTextWriter(stringoutput);
+            StringWriter stringoutput = new(new StringBuilder(63334));
+            XmlTextWriter newWriter = new(stringoutput);
 
             newWriter.WriteStartDocument();
             newWriter.WriteWhitespace("\r\n");
             newWriter.WriteStartElement(recordName);
-            recurseWriteXML(outdata, newWriter, 1);
+            RecurseWriteXML(outdata, newWriter, 1);
             newWriter.WriteEndElement();
             newWriter.WriteWhitespace("\r\n");
             newWriter.WriteEndDocument();
@@ -151,16 +170,16 @@ namespace Proliferation.Fatum
             return stringoutput.ToString();
         }
 
-        public static int writeXML(TextWriter textwriter, Tree outdata, string recordName)
+        public static int WriteXML(TextWriter textwriter, Tree outdata, string recordName)
         {
             int result = 1;
 
-            XmlTextWriter newWriter = new XmlTextWriter(textwriter);
+            XmlTextWriter newWriter = new(textwriter);
 
             newWriter.WriteStartDocument();
             newWriter.WriteWhitespace("\r\n");
             newWriter.WriteStartElement(recordName);
-            recurseWriteXML(outdata, newWriter, 1);
+            RecurseWriteXML(outdata, newWriter, 1);
             newWriter.WriteEndElement();
             newWriter.WriteWhitespace("\r\n");
             newWriter.WriteEndDocument();
@@ -170,42 +189,37 @@ namespace Proliferation.Fatum
             return result;
         }
 
-        private static Boolean recurseWriteXML(Tree current, XmlTextWriter writer, int depth)
+        private static Boolean RecurseWriteXML(Tree current, XmlTextWriter writer, int depth)
         {
             Boolean writeIndentation = true;
 
             try
             {
-                //Boolean attribs = false;
-
                 for (int i = 0; i < current.attributes.Count; i++)
                 {
-                    //attribs = true;
                     // Write Attributes
-                    writer.WriteStartAttribute((string)current.attributes[i]);
-                    writer.WriteString(sanitize((string)current.attributevalues[i]));
+                    writer.WriteStartAttribute(current.attributes[i]);
+                    writer.WriteString(Sanitize(current.attributevalues[i]));
                     writer.WriteEndAttribute();
                 }
-
 
                 if (!current.Value.Equals("") && (current.tree.Count == 0))
                 {
                     writeIndentation = false;
-                    //Boolean mustsimplify = mustConvertValue(current.Value);
-                    if (XMLTree.mustConvertValue(current.Value))
+
+                    if (XMLTree.MustConvertValue(current.Value))
                     {
                         writer.WriteStartAttribute("HexConv");
                         writer.WriteString("true");
                         writer.WriteEndAttribute();
-                        //if (attribs) writer.WriteWhitespace("\r\n");
-                        writer.WriteValue(XMLTree.stringToHex(current.Value));
+
+                        writer.WriteValue(XMLTree.StringToHex(current.Value));
                     }
                     else
                     {
-                        //if (attribs) writer.WriteWhitespace("\r\n");
                         try
                         {
-                            writer.WriteValue(sanitize(current.Value));
+                            writer.WriteValue(Sanitize(current.Value));
                         }
                         catch (Exception)
                         {
@@ -217,7 +231,7 @@ namespace Proliferation.Fatum
                 {
                     for (int i = 0; i < current.tree.Count; i++)
                     {
-                        Tree nextElement = (Tree)current.tree[i];
+                        Tree nextElement = current.tree[i];
 
                         writer.WriteWhitespace("\r\n");
                         for (int x = 0; x < depth; x++)
@@ -226,14 +240,14 @@ namespace Proliferation.Fatum
                         }
 
                         // Write Elements
-                        writer.WriteStartElement((string)current.leafnames[i]);
+                        writer.WriteStartElement(current.leafnames[i]);
 
                         // Recurse
 
-                        writeIndentation = recurseWriteXML(nextElement, writer, depth + 1);
+                        writeIndentation = RecurseWriteXML(nextElement, writer, depth + 1);
 
                         // Write End Element
-                        if (writeIndentation == true)
+                        if (writeIndentation)
                         {
                             if (current.tree.Count > 0)
                             {
@@ -262,7 +276,7 @@ namespace Proliferation.Fatum
             return writeIndentation;
         }
 
-        public static Tree readJSONFromString(string indata)
+        public static Tree ReadJsonFromString(string indata)
         {
             string xml = "";
 
@@ -280,18 +294,18 @@ namespace Proliferation.Fatum
                     xml = stringWriter.GetStringBuilder().ToString();
                 }
             }
-            catch (Newtonsoft.Json.JsonReaderException xyz)
+            catch (Newtonsoft.Json.JsonReaderException)
             {
-                //int i = 0;
+
             }
             catch (Exception)
             {
-                //int i = 0;
+
             }
-            return XMLTree.readXMLFromString(xml);
+            return XMLTree.ReadXmlFromString(xml);
         }
 
-        public static string sanitize(string instring)
+        public static string Sanitize(string instring)
         {
             return instring.Replace("<", "&lt;").Replace(">", "&gt;").Replace("&", "&amp;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("\0", string.Empty);
         }
@@ -309,7 +323,7 @@ namespace Proliferation.Fatum
             newWriter.WriteStartDocument();
             newWriter.WriteWhitespace("\r\n");
             newWriter.WriteStartElement(recordName);
-            recurseWriteXML(outdata, newWriter, 1);
+            RecurseWriteXML(outdata, newWriter, 1);
             newWriter.WriteEndElement();
             newWriter.WriteWhitespace("\r\n");
             newWriter.WriteEndDocument();
@@ -318,31 +332,31 @@ namespace Proliferation.Fatum
 
             string xmlformat = textwriter.ToString();
             xmlformat = xmlformat.Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n", "");
-            return XmlToJSON(xmlformat);
+            return XmlToJson(xmlformat);
         }
 
-        public static string XmlToJSON(string xml)
+        public static string XmlToJson(string xml)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
 
-            return XmlToJSON(doc);
+            return XmlToJson(doc);
         }
 
-        public static string XmlToJSON(XmlDocument xmlDoc)
+        public static string XmlToJson(XmlDocument xmlDoc)
         {
             StringBuilder sbJSON = new StringBuilder();
             sbJSON.Append("{ ");
-            XmlToJSONnode(sbJSON, xmlDoc.DocumentElement, true);
+            XmlToJsonNode(sbJSON, xmlDoc.DocumentElement, true);
             sbJSON.Append("}");
             return sbJSON.ToString();
         }
 
         //  XmlToJSONnode:  Output an XmlElement, possibly as part of a higher array
-        private static void XmlToJSONnode(StringBuilder sbJSON, XmlElement node, bool showNodeName)
+        private static void XmlToJsonNode(StringBuilder sbJSON, XmlElement node, bool showNodeName)
         {
             if (showNodeName)
-                sbJSON.Append("\"" + SafeJSON(node.Name) + "\": ");
+                sbJSON.Append("\"" + SafeJson(node.Name) + "\": ");
             sbJSON.Append("{");
             // Build a sorted list of key-value pairs
             //  where   key is case-sensitive nodeName
@@ -372,7 +386,7 @@ namespace Proliferation.Fatum
                     OutputNode(childname, alChild[0], sbJSON, true);
                 else
                 {
-                    sbJSON.Append(" \"" + SafeJSON(childname) + "\": [ ");
+                    sbJSON.Append(" \"" + SafeJson(childname) + "\": [ ");
                     foreach (object Child in alChild)
                         OutputNode(childname, Child, sbJSON, false);
                     sbJSON.Remove(sbJSON.Length - 2, 2);
@@ -423,24 +437,24 @@ namespace Proliferation.Fatum
             if (alChild == null)
             {
                 if (showNodeName)
-                    sbJSON.Append("\"" + SafeJSON(childname) + "\": ");
+                    sbJSON.Append("\"" + SafeJson(childname) + "\": ");
                 sbJSON.Append("null");
             }
             else if (alChild is string)
             {
                 if (showNodeName)
-                    sbJSON.Append("\"" + SafeJSON(childname) + "\": ");
+                    sbJSON.Append("\"" + SafeJson(childname) + "\": ");
                 string sChild = (string)alChild;
                 sChild = sChild.Trim();
-                sbJSON.Append("\"" + SafeJSON(sChild) + "\"");
+                sbJSON.Append("\"" + SafeJson(sChild) + "\"");
             }
             else
-                XmlToJSONnode(sbJSON, (XmlElement)alChild, showNodeName);
+                XmlToJsonNode(sbJSON, (XmlElement)alChild, showNodeName);
             sbJSON.Append(", ");
         }
 
         // Make a string safe for JSON
-        private static string SafeJSON(string sIn)
+        private static string SafeJson(string sIn)
         {
             StringBuilder sbOut = new StringBuilder(sIn.Length);
             foreach (char ch in sIn)
@@ -460,14 +474,14 @@ namespace Proliferation.Fatum
             return sbOut.ToString();
         }
 
-        public static Tree readJson(string filename)
+        public static Tree ReadJson(string filename)
         {
             string infile = File.ReadAllText(filename);
-            Tree converted = readJSONFromString(infile);
+            Tree converted = ReadJsonFromString(infile);
             return converted;
         }
 
-        public static int writeJson(string filename, Tree outdata, string recordName)
+        public static int WriteJson(string filename, Tree outdata, string recordName)
         {
             int result = 1;
             string tmp = WriteJsonToString(outdata, recordName);

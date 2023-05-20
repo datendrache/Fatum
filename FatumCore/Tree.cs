@@ -20,14 +20,14 @@ namespace Proliferation.Fatum
 {
     public sealed class Tree
     {
-        public string Value = "";
-        public string Name = "";
+        public string? Value = "";
+        public string? Name = "";
 
-        public List<string> attributes = new List<string>(0);
-        public List<string> attributevalues = new List<string>(0);
+        public List<string>? attributes = new(0);
+        public List<string>? attributevalues = new(0);
 
-        public List<string> leafnames = new List<string>(0);
-        public List<Tree> tree = new List<Tree>(0);
+        public List<string>? leafnames = new(0);
+        public List<Tree>? tree = new(0);
 
         public Boolean DEALLOCATED = false;
 
@@ -43,10 +43,7 @@ namespace Proliferation.Fatum
                 {
                     foreach (Tree current in tree)
                     {
-                        if (current != null)
-                        {
-                            current.dispose();
-                        }
+                        current?.Dispose();
                     }
                     tree.Clear();
                 }
@@ -89,7 +86,7 @@ namespace Proliferation.Fatum
         // Function for setting the Tree value
         // =================================================================
 
-        public void setElement(string newValue)
+        public void SetElement(string newValue)
         {
             Value = newValue;
         }
@@ -98,7 +95,7 @@ namespace Proliferation.Fatum
         // Functions for manipulating attributes and their values
         // =================================================================
 
-        public void addAttribute(string attrib, string newValue)
+        public void AddAttribute(string attrib, string newValue)
         {
             if (attributes != null)
             {
@@ -106,21 +103,17 @@ namespace Proliferation.Fatum
                 {
                     if (attributevalues != null)
                     {
-                        if (attributevalues != null)
+                        lock (attributevalues)
                         {
-                            lock (attributevalues)
-                            {
-                                attributes.Add(attrib);
-                                attributevalues.Add(newValue);
-                            }
+                            attributes.Add(attrib);
+                            attributevalues.Add(newValue);
                         }
                     }
                 }
             }
-
         }
 
-        public void setAttribute(string attrib, string newValue)
+        public void SetAttribute(string attrib, string newValue)
         {
             if (attributes != null)
             {
@@ -137,28 +130,25 @@ namespace Proliferation.Fatum
                 }
                 else
                 {
-                    addAttribute(attrib, newValue);
+                    AddAttribute(attrib, newValue);
                 }
             }
         }
 
-        public string getAttribute(string attrib)
+        public string? GetAttribute(string attrib)
         {
-            if (attributes != null)
+            if (attributes != null && attributevalues != null)
             {
-                if (attributevalues != null)
+                int i = attributes.IndexOf(attrib);
+                if (i != -1)
                 {
-                    int i = attributes.IndexOf(attrib);
-                    if (i != -1)
-                    {
-                        return (attributevalues[i]);
-                    }
+                    return (attributevalues[i]);
                 }
             }
             return null;
         }
 
-        public Boolean removeAttribute(string attrib)
+        public Boolean RemoveAttribute(string attrib)
         {
             if (attributes != null)
             {
@@ -186,7 +176,7 @@ namespace Proliferation.Fatum
         // Functions for managing tree nodes
         // =================================================================
 
-        public void addNode(Tree newrecord, string recordname)
+        public void AddNode(Tree newrecord, string recordname)
         {
             if (newrecord == null)
             {
@@ -194,19 +184,16 @@ namespace Proliferation.Fatum
             }
             else
             {
-                if (tree != null)
+                if (tree != null && leafnames != null)
                 {
-                    if (leafnames != null)
+                    lock (tree)
                     {
-                        lock (tree)
+                        lock (leafnames)
                         {
-                            lock (leafnames)
+                            lock (newrecord)
                             {
-                                lock (newrecord)
-                                {
-                                    tree.Add(newrecord);
-                                    leafnames.Add(recordname);
-                                }
+                                tree.Add(newrecord);
+                                leafnames.Add(recordname);
                             }
                         }
                     }
@@ -214,41 +201,34 @@ namespace Proliferation.Fatum
             }
         }
 
-        public Boolean deleteNode(string target)
+        public bool? DeleteNode(string target)
         {
             try
             {
                 lock (target)
                 {
-                    Boolean result = true;
+                    bool? result = true;
 
-                    if (target != null)
+                    if (target != null && leafnames != null && tree != null)
                     {
-                        if (leafnames != null)
+                        lock (leafnames)
                         {
-                            if (tree != null)
+                            lock (tree)
                             {
-                                lock (leafnames)
+                                int index = leafnames.IndexOf(target);
+                                if (index != -1)
                                 {
-                                    lock (tree)
-                                    {
-                                        int index = leafnames.IndexOf(target);
-                                        if (index != -1)
-                                        {
-                                            Tree disposeLeaf = (Tree)tree[index];
-                                            leafnames.RemoveAt(index);
-                                            tree.RemoveAt(index);
-                                            disposeLeaf.dispose();
-                                        }
-                                        else
-                                        {
-                                            result = false;
-                                        }
-                                    }
+                                    Tree disposeLeaf = tree[index];
+                                    leafnames.RemoveAt(index);
+                                    tree.RemoveAt(index);
+                                    disposeLeaf.Dispose();
+                                }
+                                else
+                                {
+                                    result = false;
                                 }
                             }
                         }
-
                     }
                     return (result);
                 }
@@ -259,26 +239,23 @@ namespace Proliferation.Fatum
             }
         }
 
-        public void deleteNode(int target)
+        public void DeleteNode(int target)
         {
             try
             {
-                if (leafnames != null)
+                if (leafnames != null && tree != null)
                 {
-                    if (tree != null)
-                    {
-                        Tree disposeLeaf = (Tree)tree[target];
+                    Tree disposeLeaf = tree[target];
 
-                        if (disposeLeaf != null)
+                    if (disposeLeaf != null)
+                    {
+                        lock (leafnames)
                         {
-                            lock (leafnames)
+                            lock (tree)
                             {
-                                lock (tree)
-                                {
-                                    leafnames.RemoveAt(target);
-                                    tree.RemoveAt(target);
-                                    disposeLeaf.dispose();
-                                }
+                                leafnames.RemoveAt(target);
+                                tree.RemoveAt(target);
+                                disposeLeaf.Dispose();
                             }
                         }
                     }
@@ -290,104 +267,79 @@ namespace Proliferation.Fatum
             }
         }
 
-        public Tree findNode(string name)
+        public Tree? FindNode(string name)
         {
-            if (leafnames != null)
+            if (leafnames != null && tree != null)
             {
-                if (tree != null)
-                {
-                    int index = leafnames.IndexOf(name);
+                int index = leafnames.IndexOf(name);
 
-                    if (index != -1)
-                    {
-                        return ((Tree)tree[index]);
-                    }
+                if (index != -1)
+                {
+                    return (tree[index]);
                 }
             }
-            return (null);
+            return null;
         }
 
         // =================================================================
         // Functions for simplification of a process
         // =================================================================
 
-        public void addElement(string elementname, string elementdata)
+        public void AddElement(string elementname, string elementdata)
         {
-            Tree tmpElement = new Tree(elementdata);
-            if (tmpElement.leafnames != null)
+            Tree tmpElement = new(elementdata);
+            if (tmpElement.leafnames != null && tmpElement.tree != null)
             {
-                if (tmpElement.tree != null)
-                {
-                    tmpElement.leafnames.Capacity = 0;
-                    tmpElement.tree.Capacity = 0;
+                tmpElement.leafnames.Capacity = 0;
+                tmpElement.tree.Capacity = 0;
 
-                    if (this.tree != null)
+                if (tree != null && this.leafnames != null)
+                {
+                    lock (tree)
                     {
-                        if (this.leafnames != null)
+                        lock (leafnames)
                         {
-                            lock (this.tree)
-                            {
-                                lock (this.leafnames)
-                                {
-                                    this.addNode(tmpElement, elementname);
-                                }
-                            }
+                            AddNode(tmpElement, elementname);
                         }
                     }
                 }
             }
         }
 
-        public void setElement(string elementname, string elementdata)
+        public void SetElement(string elementname, string elementdata)
         {
-            if (leafnames != null)
+            if (leafnames != null && tree != null)
             {
-                if (tree != null)
+                Tree? check = null;
+
+                int leafnamescount = leafnames.Count;
+
+                for (int i = 0; i < leafnames.Count; i++)
                 {
-                    Tree check = null;
-
-                    int leafnamescount = leafnames.Count;
-
-                    for (int i = 0; i < leafnames.Count; i++)
+                    if (leafnames[i].CompareTo(elementname) == 0)
                     {
-                        if (leafnames[i].CompareTo(elementname) == 0)
-                        {
-                            check = (Tree)tree[i];
-                            i = leafnamescount;
-                        }
+                        check = tree[i];
+                        i = leafnamescount;
                     }
+                }
 
-                    if (check == null)
-                    {
-                        this.addElement(elementname, elementdata);
-                    }
-                    else
-                    {
-                        if (check.Value != null)
-                        {
-                            lock (check.Value)
-                            {
-                                check.Value = elementdata;
-                            }
-                        }
-                        else
-                        {
-                            check.Value = elementdata;
-                        }
-                    }
+                if (check == null)
+                {
+                    AddElement(elementname, elementdata);
+                }
+                else
+                {
+                    check.Value = elementdata;
                 }
             }
         }
 
-        public string getElement(string elementname)
+        public string GetElement(string elementname)
         {
-            Tree tmpElement = this.findNode(elementname);
-            if (tmpElement != null)
+            Tree? tmpElement = FindNode(elementname);
+            if (tmpElement != null && tmpElement.Value != null)
             {
-                if (tmpElement.Value != null)
-                {
-                    return tmpElement.Value;
-                }
+                return tmpElement.Value;
             }
             return "";
         }
@@ -396,7 +348,7 @@ namespace Proliferation.Fatum
         // Functions for memory management and maintenance of Tree objects
         // ====================================================================
 
-        public void dispose()
+        public void Dispose()
         {
             if (!DEALLOCATED)
             {
@@ -408,12 +360,12 @@ namespace Proliferation.Fatum
 
                         for (int i = 0; i < treesize; i++)
                         {
-                            Tree disposeTree = (Tree)tree[i];
-                            if (disposeTree.DEALLOCATED == true)
+                            Tree disposeTree = tree[i];
+                            if (disposeTree.DEALLOCATED)
                             {
                                 i = treesize;
                             }
-                            disposeTree.dispose();
+                            disposeTree.Dispose();
                         }
                     }
 
@@ -464,7 +416,7 @@ namespace Proliferation.Fatum
         {
             try
             {
-                return recurseCopy(this);
+                return RecurseCopy(this);
             }
             catch (Exception)
             {
@@ -472,113 +424,73 @@ namespace Proliferation.Fatum
             }
         }
 
-        public static void mergeNode(Tree source, Tree destination)
+        public static void MergeNode(Tree source, Tree destination)
         {
-            if (source != null)
+            if (source != null && destination != null)
             {
-                if (destination != null)
+                Tree copy = source.Duplicate();
+                if (copy.leafnames != null && copy.tree != null && destination.leafnames != null && destination.tree != null)
                 {
-                    Tree copy = source.Duplicate();
-                    if (copy.leafnames != null)
+                    for (int i = 0; i < copy.leafnames.Count; i++)
                     {
-                        if (copy.tree != null)
-                        {
-                            if (destination.leafnames != null)
-                            {
-                                if (destination.tree != null)
-                                {
-                                    for (int i = 0; i < copy.leafnames.Count; i++)
-                                    {
-                                        destination.leafnames.Add(copy.leafnames[i].ToString());
-                                        destination.tree.Add(copy.tree[i].Duplicate());
-                                    }
-                                }
-                            }
-                        }
+                        destination.leafnames.Add(copy.leafnames[i].ToString());
+                        destination.tree.Add(copy.tree[i].Duplicate());
                     }
-
-                    if (copy.attributes != null)
-                    {
-                        if (copy.attributevalues != null)
-                        {
-                            if (destination.attributes != null)
-                            {
-                                if (destination.attributevalues != null)
-                                {
-                                    for (int i = 0; i < copy.attributes.Count; i++)
-                                    {
-                                        destination.attributes.Add(copy.attributes[i].ToString());
-                                        destination.attributevalues.Add(copy.attributevalues[i].ToString());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    copy.dispose();
                 }
+
+                if (copy.attributes != null && copy.attributevalues != null && destination.attributes != null && destination.attributevalues != null)
+                {
+                    for (int i = 0; i < copy.attributes.Count; i++)
+                    {
+                        destination.attributes.Add(copy.attributes[i].ToString());
+                        destination.attributevalues.Add(copy.attributevalues[i].ToString());
+                    }
+                }
+                copy.Dispose();
             }
         }
 
-        public static Tree recurseCopy(Tree Old)
+        public static Tree RecurseCopy(Tree Old)
         {
-            Tree result = new Tree(1);  // Create a low capacity Tree and expand to match original
-            if (result.attributes != null)
+            Tree result = new(1);  // Create a low capacity Tree and expand to match original
+            if (result.attributes != null && Old.attributes != null)
             {
-                if (Old.attributes != null)
-                {
-                    result.attributes.Capacity = Old.attributes.Count;
-                }
+                result.attributes.Capacity = Old.attributes.Count;
             }
 
-            if (result.attributevalues != null)
+            if (result.attributevalues != null && Old.attributevalues != null)
             {
-                if (Old.attributevalues != null)
-                {
-                    result.attributevalues.Capacity = Old.attributevalues.Count;
-                }
+                result.attributevalues.Capacity = Old.attributevalues.Count;
             }
-            if (result.tree != null)
+            if (result.tree != null && Old.tree != null)
             {
-                if (Old.tree != null)
-                {
-                    result.tree.Capacity = Old.tree.Count;
-                }
+                result.tree.Capacity = Old.tree.Count;
             }
-            if (result.leafnames != null)
+            if (result.leafnames != null && Old.leafnames != null)
             {
-                if (Old.leafnames != null)
-                {
-                    result.leafnames.Capacity = Old.leafnames.Count;
-                }
+                result.leafnames.Capacity = Old.leafnames.Count;
             }
 
             result.Value = Old.Value;
 
-            if (Old.attributes != null)
+            if (Old.attributes != null && Old.attributevalues != null)
             {
-                if (Old.attributevalues != null)
+                int Oldpropertysize = Old.attributes.Count;
+                for (int i = 0; i < Oldpropertysize; i++)
                 {
-                    int Oldpropertysize = Old.attributes.Count;
-                    for (int i = 0; i < Oldpropertysize; i++)
-                    {
-                        result.addAttribute(Old.attributes[i].ToString(), Old.attributevalues[i].ToString());
-                    }
+                    result.AddAttribute(Old.attributes[i].ToString(), Old.attributevalues[i].ToString());
                 }
             }
 
-            if (Old.leafnames != null)
+            if (Old.leafnames != null && Old.tree != null)
             {
-                if (Old.tree != null)
+                int Oldleafnamessize = Old.leafnames.Count;
+                for (int i = 0; i < Oldleafnamessize; i++)
                 {
-                    int Oldleafnamessize = Old.leafnames.Count;
-                    for (int i = 0; i < Oldleafnamessize; i++)
-                    {
-                        Tree oldNode = recurseCopy((Tree)Old.tree[i]);
-                        result.addNode(oldNode, Old.leafnames[i].ToString());
-                    }
+                    Tree oldNode = RecurseCopy(Old.tree[i]);
+                    result.AddNode(oldNode, Old.leafnames[i].ToString());
                 }
             }
-
             return (result);
         }
     }

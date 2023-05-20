@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FatumCore", "FatumCore\FatumCore.csproj", "{ACA92823-E616-462E-A77C-E511EAB53267}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fatum", "FatumCore\Fatum.csproj", "{ACA92823-E616-462E-A77C-E511EAB53267}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0FAF30E3-A766-4251-8A38-16F19E9FF80D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fatum.UnitTests", "Fatum.UnitTests\Fatum.UnitTests.csproj", "{14B68A8C-2A37-4991-974D-A2FDAA4514E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,10 @@ Global
 		{ACA92823-E616-462E-A77C-E511EAB53267}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACA92823-E616-462E-A77C-E511EAB53267}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACA92823-E616-462E-A77C-E511EAB53267}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14B68A8C-2A37-4991-974D-A2FDAA4514E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14B68A8C-2A37-4991-974D-A2FDAA4514E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14B68A8C-2A37-4991-974D-A2FDAA4514E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14B68A8C-2A37-4991-974D-A2FDAA4514E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

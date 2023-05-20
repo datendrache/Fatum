@@ -23,13 +23,13 @@ namespace Proliferation.Fatum
 {
     public sealed class TreeFlatten
     {
-        public Tree Flattened = null;
+        public Tree? Flattened = null;
 
         public TreeFlatten(Tree DB)
         {
             ArrayList fields = new ArrayList();
             Flattened = new Tree();
-            recurseSchema(DB, fields);
+            RecurseSchema(DB, fields);
             fields.Clear();
         }
 
@@ -37,12 +37,12 @@ namespace Proliferation.Fatum
         {
             if (Flattened!=null)
             {
-                Flattened.dispose();
+                Flattened.Dispose();
                 Flattened = null;
             }
         }
 
-        private void recurseSchema(Tree currentNode, ArrayList fields)
+        private void RecurseSchema(Tree currentNode, ArrayList fields)
         {
             if (currentNode != null)
             {
@@ -50,41 +50,24 @@ namespace Proliferation.Fatum
 
                 for (int i = 0; i < currentNodetreeCount; i++)
                 {
-                    string currentLeafname = (string)currentNode.leafnames[i];
-                    Tree currentTree = (Tree)currentNode.tree[i];
+                    string currentLeafname = currentNode.leafnames[i];
+                    Tree currentTree = currentNode.tree[i];
 
                     // Tricky logic- if the "value" of the Tree is not being used in the tuple,
                     //               we skip creating a column (these will appear as blanks)
 
-                    if (currentLeafname!=null)
+                    if (currentLeafname != null && currentLeafname != "" && currentTree != null && currentTree.leafnames.Count == 0 
+                        && !IsField(currentLeafname, fields) && !fields.Contains(currentLeafname) && !currentTree.Value.Equals(""))
                     {
-                        if (currentLeafname!="")
-                        {
-                            if (currentTree != null)
-                            {
-                                if (currentTree.leafnames.Count == 0)
-                                {
-                                    if (!isField(currentLeafname, fields))
-                                    {
-                                        if (!fields.Contains(currentLeafname))
-                                        {
-                                            if (!currentTree.Value.Equals(""))
-                                            {
-                                                fields.Add(currentLeafname);
-                                                Flattened.addElement(currentLeafname, currentTree.Value);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        fields.Add(currentLeafname);
+                        Flattened.AddElement(currentLeafname, currentTree.Value);
                     }
-                    recurseSchema((Tree)currentNode.tree[i], fields);
+                    RecurseSchema(currentNode.tree[i], fields);
                 }
             }
         }
 
-        private Boolean isField(String field, ArrayList fields)
+        private static Boolean IsField(String field, ArrayList fields)
         {
             Boolean found = false;
 
