@@ -32,7 +32,7 @@ Two solutions were on the table:  first is performing analysis for data at rest 
 To optimize, the following steps are suggested:
 
 1) Collect data
-2) Mid-Deserialize data <--- Fatum's Key Contribution
+2) Parse / Mid-Deserialize data <--- Fatum's Key Contribution
 3) Analyze data in motion
 4) Storage
 5) Forward (note that the forwarding can be straight back into another workstream at stage #3)
